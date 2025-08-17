@@ -1,13 +1,9 @@
 import os
 import requests
-import sys
 from dotenv import load_dotenv
-import json
 import csv
 
-
 load_dotenv()
-
 
 TENANT_ID = os.getenv('TENANT_ID')
 APP_ID = os.getenv('APP_ID')
@@ -52,7 +48,8 @@ with requests.Session() as s:
         else:
             url = None
 
-    fieldnames = sorted({k for row in all_rows for k in row.keys()})
+    fieldnames = all_rows[0].keys()
+    
     with open('vulnerabilities.csv', 'w', newline='', encoding='utf-8-sig') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
         writer.writeheader()
