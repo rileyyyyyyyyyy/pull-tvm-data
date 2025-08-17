@@ -12,12 +12,15 @@ APP_SECRET = os.getenv('APP_SECRET')
 
 class Requestor:
     def __init__(self, tenant_id, app_id, app_secret):
-        self._token_url = 'https://login.microsoftonline.com/%s/oauth2/token' % (tenant_id)
+        self._tenant_id = tenant_id
+        self._app_id = app_id
+        self._app_secret = app_secret
+        self._token_url = 'https://login.microsoftonline.com/%s/oauth2/token' % (self._tenant_id)
         self._resource_app_id_uri = 'https://api.securitycenter.microsoft.com'
         self._body = {
-            'resource': RESOURCE_APP_ID_URI,
-            'client_id': APP_ID,
-            'client_secret': APP_SECRET,
+            'resource': self._resource_app_id_uri,
+            'client_id': self._app_id,
+            'client_secret': self._app_secret,
             'grant_type': 'client_credentials'
         }
         self._aad_token = None
@@ -26,7 +29,7 @@ class Requestor:
         return requests.Session()
     
     def _get_token(self, session):
-        request = session.get(url=url, data=body)
+        request = session.get(url=self._token_url, data=self._body)
         data = request.json()
         
         self._aad_token = data['access_token']
@@ -38,7 +41,7 @@ class Requestor:
         })
 
     def request_data(self, session):
-        if self.__aad_token is None:
+        if self._aad_token is None:
             self._get_token(session)
         
         all_rows = []
