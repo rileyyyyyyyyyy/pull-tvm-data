@@ -3,12 +3,6 @@ import requests
 from dotenv import load_dotenv
 import csv
 
-load_dotenv()
-
-TENANT_ID = os.getenv('TENANT_ID')
-APP_ID = os.getenv('APP_ID')
-APP_SECRET = os.getenv('APP_SECRET')
-
 
 class Requestor:
     def __init__(self, tenant_id, app_id, app_secret):
@@ -69,7 +63,13 @@ class Requestor:
         print(f'{len(all_rows)} rows written to output.csv')
 
 
-def main():    
+def main():
+    load_dotenv()
+    
+    TENANT_ID = os.getenv('TENANT_ID')
+    APP_ID = os.getenv('APP_ID')
+    APP_SECRET = os.getenv('APP_SECRET')
+    
     requestor = Requestor(TENANT_ID, APP_ID, APP_SECRET)
 
     with requestor.open_session() as s:
