@@ -40,12 +40,11 @@ class Requestor:
             'Authorization': f'Bearer {self._aad_token}'
         })
 
-    def request_data(self, session):
+    def request_data(self, session, url):
         if self._aad_token is None:
             self._get_token(session)
         
-        all_rows = []
-        url = 'https://api.securitycenter.microsoft.com/api/vulnerabilities'
+        all_rows = []        
         
         while url:
             response = session.get(url, timeout=120)
@@ -70,9 +69,14 @@ class Requestor:
         print(f'{len(all_rows)} rows written to output.csv')
 
 
+def main():    
+    requestor = Requestor(TENANT_ID, APP_ID, APP_SECRET)
 
-requestor = Requestor(TENANT_ID, APP_ID, APP_SECRET)
-
-with requestor.open_session() as s:
-    requestor.request_data(s)
+    with requestor.open_session() as s:
+        requestor.request_data(
+            s,
+            'https://api.securitycenter.microsoft.com/api/vulnerabilities'
+        )
     
+if __name__ == '__main__':
+    main()
